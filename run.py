@@ -1,16 +1,41 @@
-# Your code goes here.
-# You can delete these comments, but do not change the name of this file
-# Write your code to expect a terminal of 80 characters wide and 24 rows high
+#Imports
 
 from pyfiglet import Figlet
 import colorama
 import os
 
-
+#Variable declerations
 f = Figlet(font="slant")
+screenX = 80
+screenY = 24
+
+#Class definitions
+
+class Player:
+    posX = 5
+    posY = 5
+    health = 100
+    armour = 0
+    inventory = {}
+
+    def __init__(self, name):
+        self.name = name
+
+    def drawPlayer(self):
+        print("\033["+str(self.posY)+";"+str(self.posX)+"fi")
+
+    def damagePlayer(self, damage):
+        self.health -= damage
+        if self.health <= 0:
+            end_game()
+    
+
+#Function definitions
 
 def start_menu():
-    
+    """
+    Function to display the start menu
+    """
     os.system("clear")
     print(f.renderText("Into the Depths"))
     print("Please choose an option by typing either '1' or '2' and pressing enter. \n \n")
@@ -30,9 +55,21 @@ def start_menu():
 
 
 def start_game():
-    print("Game started!")
+    """
+    Main function to start the game
+    """
+    running = True
+    
+    P = Player("John")
+    #while running:
+    os.system("clear")
+    P.drawPlayer()
+        
 
 def display_instructions():
+    """
+    Display the game's instructions to the user
+    """
     os.system("clear")
     print(f.renderText("Instructions") + "\n \n")
     print("Once you have started the game by choosing option '1' on the start menu,")
