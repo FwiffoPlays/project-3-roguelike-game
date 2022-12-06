@@ -11,10 +11,12 @@ screenY = 24
 
 #Class definitions
 
+
 class Player:
     posX = 5
     posY = 5
     health = 100
+    score = 10
     armour = 0
     inventory = {}
 
@@ -27,10 +29,11 @@ class Player:
     def damagePlayer(self, damage):
         self.health -= damage
         if self.health <= 0:
-            end_game()
-    
+            end_game(self.score)
+
 
 #Function definitions
+
 
 def start_menu():
     """
@@ -64,7 +67,38 @@ def start_game():
     #while running:
     os.system("clear")
     P.drawPlayer()
+
         
+def end_game(score):
+    """
+    Displays the 'game over' screen with the player's
+    final score, giving the choice to return to
+    the main menu or play again.
+    """
+    os.system("clear")
+
+    print(f.renderText("Game over") + "\n \n")
+    print("""
+    You have perished.
+    Your final score was
+        """ + str(score) +
+        """
+    Would you like to play again?
+    Type 'y' to play again or 'n' to exit to the
+    main menu.
+        """)
+    answer = input("")
+
+    while answer != "y" and answer != "n":
+        print("Entered value: "+answer)
+        print("Invalid choice, please enter either 'y' or 'n' to make a selection.")
+        answer = input("")
+    
+    if answer == "y":
+        start_game()
+    elif answer == "n":
+        start_menu()
+
 
 def display_instructions():
     """
