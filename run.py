@@ -16,8 +16,8 @@ inkey_buffer = 1
 
 
 class Player:
-    posX = 5
-    posY = 5
+    posX = 1
+    posY = 1
     health = 100
     score = 10
     armour = 0
@@ -27,7 +27,7 @@ class Player:
         self.name = name
 
     def drawPlayer(self):
-        print("\033["+str(self.posY)+";"+str(self.posX)+"fi")
+        drawChar(self.posX, self.posY, "i")
 
     def damagePlayer(self, damage):
         self.health -= damage
@@ -53,6 +53,7 @@ class Player:
 
 #Functions sourced from the internet
 
+
 def inkey():
     """
     Retrieves the key which was pressed by the user without hitting
@@ -68,6 +69,14 @@ def inkey():
 
 #Function definitions
 
+
+def drawChar(x, y, char):
+    """
+    Function to draw the specified character
+    at a specific location in the terminal
+    """
+
+    print("\033["+str(y)+";"+str(x)+"f"+str(char))
 
 def start_menu():
     """
@@ -101,8 +110,9 @@ def start_game():
     while running:
         os.system("clear")
         P.drawPlayer()
+        drawChar(10, 10, "X")
         char = inkey()
-        print("DEBUG: key '" + char + "' was pressed")
+        #print("DEBUG: key '" + char + "' was pressed")
         if char == chr(27):
             start_menu()
 
