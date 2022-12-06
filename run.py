@@ -7,11 +7,44 @@ import termios
 import sys
 import tty
 
-#Variable declerations
+#Variable declarations
 f = Figlet(font="slant")
 screenX = 80
 screenY = 24
 inkey_buffer = 1
+current_level = 1
+
+
+#Ascii art
+
+boxFullAscii = [
+    "+---+",
+    "| i |",
+    "+---+"
+]
+
+boxEmptyAscii = [
+    "+---+",
+    "|   |",
+    "+---+"
+]
+
+doorClosedAscii = [
+    "+--+",
+    "||||",
+    "||||",
+    "+--+"
+]
+
+doorOpenAscii = [
+    "+--+",
+    "|  |",
+    "|  |",
+    "+--+"
+]
+
+
+
 #Class definitions
 
 
@@ -36,7 +69,7 @@ class Player:
 
     def movePlayer(self, direction):
         if direction == "up":
-            if self.posY >= 1:
+            if self.posY > 1:
                 self.posY -= 1
 
         elif direction == "down":
@@ -44,12 +77,18 @@ class Player:
                 self.posY += 1
 
         elif direction == "left":
-            if self.posX >= 1:
+            if self.posX > 1:
                 self.posX -= 1
 
         elif direction == "right":
             if self.posX <= screenX-1:
                 self.posX += 1
+    
+    def getXPos(self):
+        return self.posX
+
+    def getYPos(self):
+        return self.posY
 
 #Functions sourced from the internet
 
@@ -78,10 +117,15 @@ def drawChar(x, y, char):
 
     print("\033["+str(y)+";"+str(x)+"f"+str(char))
 
+def drawAscii(x, y, ascii):
+    for i in range(0, len(ascii)):
+            drawChar(x, y+i, ascii[i])
+
 def start_menu():
     """
     Function to display the start menu
     """
+
     os.system("clear")
     print(f.renderText("Into the Depths"))
     print("Please choose an option by typing either '1' or '2' and pressing enter. \n \n")
@@ -109,9 +153,14 @@ def start_game():
     P = Player("John")
     while running:
         os.system("clear")
+
+        drawAscii(5, 5, doorOpenAscii)
+
+        drawChar(1, 1, "Player pos: X: "+str(P.getXPos())+ " Y: "+str(P.getYPos()))
         P.drawPlayer()
-        drawChar(10, 10, "X")
         char = inkey()
+        
+
         #print("DEBUG: key '" + char + "' was pressed")
         if char == chr(27):
             start_menu()
@@ -124,6 +173,8 @@ def start_game():
             P.movePlayer("down")
         elif char == "d":
             P.movePlayer("right")
+        elif char == "b":
+            drawChar(P.getXPos(), P.getYPos(), boxEmptyAscii)
         
 def end_game(score):
     """
