@@ -3,12 +3,15 @@
 from pyfiglet import Figlet
 import colorama
 import os
+import termios
+import sys
+import tty
 
 #Variable declerations
 f = Figlet(font="slant")
 screenX = 80
 screenY = 24
-
+inkey_buffer = 1
 #Class definitions
 
 
@@ -30,6 +33,37 @@ class Player:
         self.health -= damage
         if self.health <= 0:
             end_game(self.score)
+
+    def movePlayer(self, direction):
+        if direction == "up":
+            if self.posY >= 1:
+                self.posY -= 1
+
+        elif direction == "down":
+            if self.posY <= screenY-1:
+                self.posY += 1
+
+        elif direction == "left":
+            if self.posX >= 1:
+                self.posX -= 1
+
+        elif direction == "right":
+            if self.posX <= screenX-1:
+                self.posX += 1
+
+#Functions sourced from the internet
+
+def inkey():
+    """
+    Retrieves the key which was pressed by the user without hitting
+    enter.
+    """
+    fd=sys.stdin.fileno()
+    remember_attributes=termios.tcgetattr(fd)
+    tty.setraw(sys.stdin.fileno())
+    character=sys.stdin.read(inkey_buffer)
+    termios.tcsetattr(fd, termios.TCSADRAIN, remember_attributes)
+    return character
 
 
 #Function definitions
@@ -64,10 +98,22 @@ def start_game():
     running = True
     
     P = Player("John")
-    #while running:
-    os.system("clear")
-    P.drawPlayer()
+    while running:
+        os.system("clear")
+        P.drawPlayer()
+        char = inkey()
+        print("DEBUG: key '" + char + "' was pressed")
+        if char == chr(27):
+            start_menu()
 
+        elif char == "w":
+            P.movePlayer("up")
+        elif char == "a":
+            P.movePlayer("left")
+        elif char == "s":
+            P.movePlayer("down")
+        elif char == "d":
+            P.movePlayer("right")
         
 def end_game(score):
     """
