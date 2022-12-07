@@ -13,7 +13,7 @@ screenX = 80
 screenY = 24
 inkey_buffer = 1
 current_level = 1
-
+running = False
 
 #Ascii art
 
@@ -125,7 +125,7 @@ def start_menu():
     """
     Function to display the start menu
     """
-
+    running = False
     os.system("clear")
     print(f.renderText("Into the Depths"))
     print("Please choose an option by typing either '1' or '2' and pressing enter. \n \n")
@@ -149,20 +149,20 @@ def start_game():
     Main function to start the game
     """
     running = True
-    
     P = Player("John")
     while running:
         os.system("clear")
 
         drawAscii(5, 5, doorOpenAscii)
 
-        drawChar(1, 1, "Player pos: X: "+str(P.getXPos())+ " Y: "+str(P.getYPos()))
+        drawChar(1, 1, "DEBUG Player pos: X: "+str(P.getXPos())+ " Y: "+str(P.getYPos()))
         P.drawPlayer()
         char = inkey()
         
 
         #print("DEBUG: key '" + char + "' was pressed")
         if char == chr(27):
+            running = False
             start_menu()
 
         elif char == "w":
@@ -173,8 +173,6 @@ def start_game():
             P.movePlayer("down")
         elif char == "d":
             P.movePlayer("right")
-        elif char == "b":
-            drawChar(P.getXPos(), P.getYPos(), boxEmptyAscii)
         
 def end_game(score):
     """
@@ -183,7 +181,7 @@ def end_game(score):
     the main menu or play again.
     """
     os.system("clear")
-
+    running = False
     print(f.renderText("Game over") + "\n \n")
     print("""
     You have perished.
@@ -239,7 +237,8 @@ def display_instructions():
     print("Down arrow - Attack down")
     print("Right arrow - Attack right \n")
     print("Miscellaneous:")
-    print("'i' - View inventory \n")
+    print("'i' - View inventory")
+    print("'Esc' - Exit back to main menu \n")
 
     print(f.renderText("Good luck!"))
 
