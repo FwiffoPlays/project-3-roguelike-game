@@ -1,31 +1,41 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
+# Into the Depths - Project 3
 
-Welcome HarrisonBrookesBoon,
+Into the Depths is a Python based command-line game for Project 3 of the Code Insitute Full Stack Web Development course.
 
-This is the Code Institute student template for deploying your third portfolio project, the Python command-line project. The last update to this file was: **August 17, 2021**
+It is based on the 'roguelike' genre of games and utilises ASCII art in the command line as visual feedback for the user.
 
-## Reminders
+## How To Play
 
-* Your code must be placed in the `run.py` file
-* Your dependencies must be placed in the `requirements.txt` file
-* Do not edit any of the other files or your code may not deploy properly
 
-## Creating the Heroku app
+## User Experience
 
-When you create the app, you will need to add two buildpacks from the _Settings_ tab. The ordering is as follows:
+### User Stories
 
-1. `heroku/python`
-2. `heroku/nodejs`
+## Features
 
-You must then create a _Config Var_ called `PORT`. Set this to `8000`
+### Future development and features
 
-If you have credentials, such as in the Love Sandwiches project, you must create another _Config Var_ called `CREDS` and paste the JSON into the value field.
+## Classes
 
-Connect your GitHub repository and deploy as normal.
+## Flow Control
+![Flow control diagram](assets/images/readme/FlowControlDiagram.jpg)
 
-## Constraints
+## Aesthetic Design
 
-The deployment terminal is set to 80 columns by 24 rows. That means that each line of text needs to be 80 characters or less otherwise it will be wrapped onto a second line.
+## Libraries and Technology Used
 
------
-Happy coding!
+**Built-in Libraries**
+
+**Third-party Libraries**
+
+## Testing
+
+### Found issues/bugs
+
+### Validator testing
+
+## Deployment
+
+### Version Control
+
+## Credits
