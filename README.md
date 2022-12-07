@@ -18,7 +18,7 @@ W, A, S, D keys move the player Up, Left, Down or Right respectively
 The Up, Down, Left or Right arrows keys attack in their respective directions.
 The 'E' key allows the user to interact with the item they are stood over, such as a chest or door.
 The 'I' key opens the player's inventory, where they can equip items they have collected whilst playing.
- 
+The 'Esc' key exits the game back to the main menu. 
 ## User Experience
 
 ### User Stories
