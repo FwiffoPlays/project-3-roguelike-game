@@ -6,6 +6,9 @@ import os
 import termios
 import sys
 import tty
+import math
+import random
+
 
 #Variable declarations
 f = Figlet(font="slant")
@@ -48,7 +51,66 @@ doorOpenAscii = [
 #Class definitions
 
 
+class Enemy:
+    """
+    Generic class for enemies, defining their variables and functions
+    """
+    def __init__ (self, health, damage, hitChance, xPos, yPos, char):
+        self.health = health
+        self.damage = damage
+        self.hitChance = hitChance
+        self.xPos = xPos
+        self.yPos = yPos
+        self.char = char
+        self.xDir = 0
+        self.yDir = 0
+        self.range = 5
+
+    def getHealth(self):
+        return self.health
+
+    def setHealth(self, h):
+        self.health = h
+
+    def damage(self, d):
+        self.health -= d
+
+    def setPos(self, x, y):
+        self.xPos = x
+        self.yPos = y
+
+    def drawEnemy(self):
+        drawChar(self.xPos, self.yPos, self.char)
+
+    def checkPlayerDir(self, xPlayer, yPlayer):
+        if self.xPos > xPlayer+1:
+            self.xDir = -1
+        elif self.xPos < xPlayer-1:
+            self.xDir = 1
+        else:
+            self.xDir = 0
+        
+        if self.yPos > yPlayer+1:
+            self.yDir = -1
+        elif self.yPos < yPlayer-1:
+            self.yDir = 1
+        else:
+            self.yDir = 0
+    
+    def checkPlayerDist(self, xPlayer, yPlayer):
+        if math.dist((xPlayer, yPlayer), (self.xPos, self.yPos)) <= self.range:
+            return True
+    
+    def moveEnemy(self):
+        self.xPos += self.xDir
+        self.yPos += self.yDir
+        self.drawEnemy()
+
+
 class Player:
+    """
+    Class for the player, containing their attributes and main functions
+    """
     posX = 1
     posY = 1
     health = 100
@@ -150,16 +212,34 @@ def start_game():
     """
     running = True
     P = Player("John")
+    enemies = []
+
+    for i in range(0, 4):
+        enemies.append(Enemy(100, 10, 0.2, random.randint(4, 79), random.randint(4, 23), "G"))
+
     while running:
         os.system("clear")
 
-        drawAscii(5, 5, doorOpenAscii)
-
-        drawChar(1, 1, "DEBUG Player pos: X: "+str(P.getXPos())+ " Y: "+str(P.getYPos()))
-        P.drawPlayer()
-        char = inkey()
+        #drawAscii(5, 5, doorOpenAscii)
         
 
+        drawChar(1, 1, "DEBUG Player pos: X: "+str(P.getXPos())+ " Y: "+str(P.getYPos()))
+
+        
+
+        P.drawPlayer()
+        
+        #inkey()
+        for e in enemies:
+            if e.checkPlayerDist(P.getXPos(), P.getYPos()):
+                e.checkPlayerDir(P.getXPos(), P.getYPos())
+                e.moveEnemy()
+            else:
+                e.drawEnemy()
+
+        
+        char = inkey()
+        
         #print("DEBUG: key '" + char + "' was pressed")
         if char == chr(27):
             running = False
