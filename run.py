@@ -11,12 +11,14 @@ import random
 
 
 #Variable declarations
+
 f = Figlet(font="slant")
 screenX = 80
 screenY = 24
 inkey_buffer = 1
 current_level = 1
 running = False
+enemies = []
 
 #Ascii art
 
@@ -47,7 +49,6 @@ doorOpenAscii = [
 ]
 
 
-
 #Class definitions
 
 
@@ -55,7 +56,7 @@ class Enemy:
     """
     Generic class for enemies, defining their variables and functions
     """
-    def __init__ (self, health, damage, hitChance, xPos, yPos, char):
+    def __init__(self, health, damage, hitChance, xPos, yPos, char):
         self.health = health
         self.damage = damage
         self.hitChance = hitChance
@@ -89,18 +90,18 @@ class Enemy:
             self.xDir = 1
         else:
             self.xDir = 0
-        
+
         if self.yPos > yPlayer+1:
             self.yDir = -1
         elif self.yPos < yPlayer-1:
             self.yDir = 1
         else:
             self.yDir = 0
-    
+
     def checkPlayerDist(self, xPlayer, yPlayer):
         if math.dist((xPlayer, yPlayer), (self.xPos, self.yPos)) <= self.range:
             return True
-    
+
     def moveEnemy(self):
         self.xPos += self.xDir
         self.yPos += self.yDir
@@ -145,7 +146,7 @@ class Player:
         elif direction == "right":
             if self.posX <= screenX-1:
                 self.posX += 1
-    
+
     def getXPos(self):
         return self.posX
 
@@ -179,9 +180,17 @@ def drawChar(x, y, char):
 
     print("\033["+str(y)+";"+str(x)+"f"+str(char))
 
+
 def drawAscii(x, y, ascii):
     for i in range(0, len(ascii)):
-            drawChar(x, y+i, ascii[i])
+        drawChar(x, y+i, ascii[i])
+
+def generate_room(number):
+    enemies = []
+    for i in range(0, random.randint(1, number+1)):
+        enemies.append(Enemy((10*(number)), 10, 0.2, random.randint(4, 79), random.randint(4, 23), "G"))
+
+    return enemies
 
 def start_menu():
     """
@@ -212,23 +221,27 @@ def start_game():
     """
     running = True
     P = Player("John")
-    enemies = []
-
-    for i in range(0, 4):
-        enemies.append(Enemy(100, 10, 0.2, random.randint(4, 79), random.randint(4, 23), "G"))
+    roomNo = 1
+    roomClear = True
+    
 
     while running:
+
+        if roomClear:
+            enemies = generate_room(roomNo)
+            drawChar(1, 2, "Room generated")
+            roomClear = False
+
         os.system("clear")
 
         #drawAscii(5, 5, doorOpenAscii)
-        
 
-        drawChar(1, 1, "DEBUG Player pos: X: "+str(P.getXPos())+ " Y: "+str(P.getYPos()))
-
-        
+        #drawChar(1, 1, "DEBUG Player pos: X: "+str(P.getXPos())+ " Y: "+str(P.getYPos()))
+        drawChar(1, 1, str(len(enemies))+" enemies remaining")
 
         P.drawPlayer()
-        
+
+        #inkey()
         #inkey()
         for e in enemies:
             if e.checkPlayerDist(P.getXPos(), P.getYPos()):
@@ -236,10 +249,9 @@ def start_game():
                 e.moveEnemy()
             else:
                 e.drawEnemy()
-
-        
+        #drawChar(3, 1, "Debug: ")
         char = inkey()
-        
+
         #print("DEBUG: key '" + char + "' was pressed")
         if char == chr(27):
             running = False
@@ -253,7 +265,8 @@ def start_game():
             P.movePlayer("down")
         elif char == "d":
             P.movePlayer("right")
-        
+
+
 def end_game(score):
     """
     Displays the 'game over' screen with the player's
@@ -278,7 +291,7 @@ def end_game(score):
         print("Entered value: "+answer)
         print("Invalid choice, please enter either 'y' or 'n' to make a selection.")
         answer = input("")
-    
+
     if answer == "y":
         start_game()
     elif answer == "n":
@@ -305,7 +318,7 @@ def display_instructions():
     input("Press enter for the game controls")
 
     os.system("clear")
-    print(f.renderText("Controls") + "\n") 
+    print(f.renderText("Controls") + "\n")
     print("Movement:")
     print("W - Up")
     print("A - Left")
