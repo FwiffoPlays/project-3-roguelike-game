@@ -118,6 +118,36 @@ class Enemy:
                         return "HIT"
                 else:
                     return "MISS"
+            elif direction == "left":
+                if xPlayer == (self.xPos + 1) and yPlayer == self.yPos:
+                    self.takeDamage(dmg)
+                    if self.health <= 0:
+                        self.active = False
+                        return "KILLED,"+str(math.floor(self.baseHealth*self.hitChance*self.attack))
+                    else:
+                        return "HIT"
+                else:
+                    return "MISS"
+            elif direction == "down":
+                if xPlayer == self.xPos and yPlayer == (self.yPos - 1):
+                    self.takeDamage(dmg)
+                    if self.health <= 0:
+                        self.active = False
+                        return "KILLED,"+str(math.floor(self.baseHealth*self.hitChance*self.attack))
+                    else:
+                        return "HIT"
+                else:
+                    return "MISS"
+            elif direction == "right":
+                if xPlayer == (self.xPos - 1) and yPlayer == self.yPos:
+                    self.takeDamage(dmg)
+                    if self.health <= 0:
+                        self.active = False
+                        return "KILLED,"+str(math.floor(self.baseHealth*self.hitChance*self.attack))
+                    else:
+                        return "HIT"
+                else:
+                    return "MISS"
             else:
                 return False
         else:
@@ -258,7 +288,6 @@ def getActiveEnemies(enemies):
             count += 1
     return count
 
-
 def start_game():
     """
     Main function to start the game
@@ -287,7 +316,7 @@ def start_game():
             roomClear = True
             P.addScore(100 * roomNo)
             roomNo += 1
-            
+
         os.system("clear")
 
         drawChar(1, 1, str(enemyNo)+" enemies remaining. - Player score is "+str(P.getScore())+" - "+message)
@@ -323,9 +352,18 @@ def start_game():
                 P.movePlayer("down")
             elif char == "d":
                 P.movePlayer("right")
-            elif char == "i":
+            elif char == "i" or char == "j" or char == "k" or char == "l":
+                if char == "i":
+                    attackDir = "up"
+                elif char == "j":
+                    attackDir = "left"
+                elif char == "k":
+                    attackDir = "down"
+                elif char == "l":
+                    attackDir = "right"
+
                 for e in enemies:
-                    attackResponse = e.checkPlayerAttack(P.getXPos(), P.getYPos(), "up", P.getDamage()).split(",")
+                    attackResponse = e.checkPlayerAttack(P.getXPos(), P.getYPos(), attackDir, P.getDamage()).split(",")
                     if attackResponse[0] == "KILLED":
                         P.addScore(int(attackResponse[1]))
                         message = "Enemy killed"
@@ -337,6 +375,7 @@ def start_game():
                         message = "Attack missed"
                     else:
                         message = "ERROR invalid attackResponse"
+
 
         #drawChar(15, 3, "Enemy's turn")
         #inkey()
