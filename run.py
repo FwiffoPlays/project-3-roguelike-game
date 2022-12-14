@@ -173,9 +173,11 @@ class Player:
     damage = 50
     armour = 0
     inventory = {}
+    attackChance = 0.33
 
     def __init__(self, name):
         self.name = name
+        
 
     def drawPlayer(self):
         drawChar(self.posX, self.posY, "i")
@@ -210,6 +212,9 @@ class Player:
 
     def getDamage(self):
         return self.damage
+    
+    def getAttackChance(self):
+        return self.attackChance
 
     def setDamage(self, newDamage):
         self.damage = newDamage
@@ -353,28 +358,31 @@ def start_game():
             elif char == "d":
                 P.movePlayer("right")
             elif char == "i" or char == "j" or char == "k" or char == "l":
-                if char == "i":
-                    attackDir = "up"
-                elif char == "j":
-                    attackDir = "left"
-                elif char == "k":
-                    attackDir = "down"
-                elif char == "l":
-                    attackDir = "right"
+                if random.random() >= P.getAttackChance(): 
+                    if char == "i":
+                        attackDir = "up"
+                    elif char == "j":
+                        attackDir = "left"
+                    elif char == "k":
+                        attackDir = "down"
+                    elif char == "l":
+                        attackDir = "right"
 
-                for e in enemies:
-                    attackResponse = e.checkPlayerAttack(P.getXPos(), P.getYPos(), attackDir, P.getDamage()).split(",")
-                    if attackResponse[0] == "KILLED":
-                        P.addScore(int(attackResponse[1]))
-                        message = "Enemy killed"
-                    elif attackResponse[0] == "HIT":
-                        message = "Attack hit!"
-                    elif attackResponse[0] == "MISS":
-                        message = "Attack missed"
-                    elif attackResponse[0] == "DEAD":
-                        message = "Attack missed"
-                    else:
-                        message = "ERROR invalid attackResponse"
+                    for e in enemies:
+                        attackResponse = e.checkPlayerAttack(P.getXPos(), P.getYPos(), attackDir, P.getDamage()).split(",")
+                        if attackResponse[0] == "KILLED":
+                            P.addScore(int(attackResponse[1]))
+                            message = "Enemy killed"
+                        elif attackResponse[0] == "HIT":
+                            message = "Attack hit!"
+                        elif attackResponse[0] == "MISS":
+                            message = "Attack missed"
+                        elif attackResponse[0] == "DEAD":
+                            message = "Attack missed"
+                        else:
+                            message = "ERROR invalid attackResponse"
+                else:
+                    message = "Attack missed"
 
 
         #drawChar(15, 3, "Enemy's turn")
@@ -439,10 +447,10 @@ def display_instructions():
     print("S - Down")
     print("D - Right \n")
     print("Attack:")
-    print("Up arrow - Attack upwards")
-    print("Left arrow - Attack left")
-    print("Down arrow - Attack down")
-    print("Right arrow - Attack right \n")
+    print("I- Attack upwards")
+    print("J - Attack left")
+    print("K - Attack down")
+    print("L - Attack right \n")
     print("Miscellaneous:")
     print("'i' - View inventory")
     print("'Esc' - Exit back to main menu \n")
