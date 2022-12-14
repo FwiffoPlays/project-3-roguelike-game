@@ -282,6 +282,12 @@ def start_game():
             if e.checkActive():
                 enemyNo += 1
     
+        if enemyNo == 0:
+            message = "All enemies killed!"
+            roomClear = True
+            P.addScore(100 * roomNo)
+            roomNo += 1
+            
         os.system("clear")
 
         drawChar(1, 1, str(enemyNo)+" enemies remaining. - Player score is "+str(P.getScore())+" - "+message)
