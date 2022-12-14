@@ -1,7 +1,7 @@
 #Imports
 
 from pyfiglet import Figlet
-import colorama
+#import colorama
 import os
 import termios
 import sys
@@ -56,9 +56,10 @@ class Enemy:
     """
     Generic class for enemies, defining their variables and functions
     """
-    def __init__(self, health, damage, hitChance, xPos, yPos, char):
-        self.health = health
-        self.damage = damage
+    def __init__(self, baseHealth, attack, hitChance, xPos, yPos, char):
+        self.baseHealth = baseHealth
+        self.health = baseHealth
+        self.attack = attack
         self.hitChance = hitChance
         self.xPos = xPos
         self.yPos = yPos
@@ -66,6 +67,7 @@ class Enemy:
         self.xDir = 0
         self.yDir = 0
         self.range = 5
+        self.active = True
 
     def getHealth(self):
         return self.health
@@ -73,7 +75,7 @@ class Enemy:
     def setHealth(self, h):
         self.health = h
 
-    def damage(self, d):
+    def takeDamage(self, d):
         self.health -= d
 
     def setPos(self, x, y):
@@ -81,7 +83,9 @@ class Enemy:
         self.yPos = y
 
     def drawEnemy(self):
-        drawChar(self.xPos, self.yPos, self.char)
+        if self.active:
+            drawChar(self.xPos-1, self.yPos-1, self.health)
+            drawChar(self.xPos, self.yPos, self.char)
 
     def checkPlayerDir(self, xPlayer, yPlayer):
         if self.xPos > xPlayer+1:
@@ -102,20 +106,41 @@ class Enemy:
         if math.dist((xPlayer, yPlayer), (self.xPos, self.yPos)) <= self.range:
             return True
 
+    def checkPlayerAttack(self, xPlayer, yPlayer, direction, dmg):
+        if self.active:
+            if direction == "up":
+                if xPlayer == self.xPos and yPlayer == (self.yPos + 1):
+                    self.takeDamage(dmg)
+                    if self.health <= 0:
+                        self.active = False
+                        return "KILLED,"+str(math.floor(self.baseHealth*self.hitChance*self.attack))
+                    else:
+                        return "HIT"
+                else:
+                    return "MISS"
+            else:
+                return False
+        else:
+            return "DEAD"
+
     def moveEnemy(self):
         self.xPos += self.xDir
         self.yPos += self.yDir
         self.drawEnemy()
+
+    def checkActive(self):
+        return self.active
 
 
 class Player:
     """
     Class for the player, containing their attributes and main functions
     """
-    posX = 1
-    posY = 1
+    posX = 5
+    posY = 5
     health = 100
-    score = 10
+    score = 0
+    damage = 50
     armour = 0
     inventory = {}
 
@@ -152,6 +177,18 @@ class Player:
 
     def getYPos(self):
         return self.posY
+
+    def getDamage(self):
+        return self.damage
+
+    def setDamage(self, newDamage):
+        self.damage = newDamage
+
+    def addScore(self, amount):
+        self.score += amount
+    
+    def getScore(self):
+        return self.score
 
 #Functions sourced from the internet
 
@@ -191,7 +228,6 @@ def generate_room(number):
         enemies.append(Enemy((10*(number)), 10, 0.2, random.randint(4, 79), random.randint(4, 23), "G"))
 
     return enemies
-
 def start_menu():
     """
     Function to display the start menu
@@ -215,6 +251,14 @@ def start_menu():
         display_instructions()
 
 
+def getActiveEnemies(enemies):
+    count = 0
+    for e in enemies:
+        if e.checkActive:
+            count += 1
+    return count
+
+
 def start_game():
     """
     Main function to start the game
@@ -223,48 +267,73 @@ def start_game():
     P = Player("John")
     roomNo = 1
     roomClear = True
-    
+    message = ""
+    playerTurn = True
 
     while running:
+        enemyNo = 0
 
         if roomClear:
             enemies = generate_room(roomNo)
-            drawChar(1, 2, "Room generated")
+            #drawChar(1, 2, "Room generated")
             roomClear = False
 
+        for e in enemies:
+            if e.checkActive():
+                enemyNo += 1
+    
         os.system("clear")
 
-        #drawAscii(5, 5, doorOpenAscii)
-
-        #drawChar(1, 1, "DEBUG Player pos: X: "+str(P.getXPos())+ " Y: "+str(P.getYPos()))
-        drawChar(1, 1, str(len(enemies))+" enemies remaining")
+        drawChar(1, 1, str(enemyNo)+" enemies remaining. - Player score is "+str(P.getScore())+" - "+message)
 
         P.drawPlayer()
-
-        #inkey()
-        #inkey()
-        for e in enemies:
-            if e.checkPlayerDist(P.getXPos(), P.getYPos()):
-                e.checkPlayerDir(P.getXPos(), P.getYPos())
-                e.moveEnemy()
-            else:
+        
+        if not playerTurn:
+            playerTurn = True
+            for e in enemies:
+                if e.checkActive():
+                    if e.checkPlayerDist(P.getXPos(), P.getYPos()):
+                        e.checkPlayerDir(P.getXPos(), P.getYPos())
+                        e.moveEnemy()
+                    else:
+                        e.drawEnemy()
+            ##inkey()
+        else:
+            for e in enemies:
                 e.drawEnemy()
-        #drawChar(3, 1, "Debug: ")
-        char = inkey()
 
-        #print("DEBUG: key '" + char + "' was pressed")
-        if char == chr(27):
-            running = False
-            start_menu()
+            char = inkey()
+            playerTurn = False
+        
+            if char == chr(27):
+                running = False
+                start_menu()
 
-        elif char == "w":
-            P.movePlayer("up")
-        elif char == "a":
-            P.movePlayer("left")
-        elif char == "s":
-            P.movePlayer("down")
-        elif char == "d":
-            P.movePlayer("right")
+            elif char == "w":
+                P.movePlayer("up")
+            elif char == "a":
+                P.movePlayer("left")
+            elif char == "s":
+                P.movePlayer("down")
+            elif char == "d":
+                P.movePlayer("right")
+            elif char == "i":
+                for e in enemies:
+                    attackResponse = e.checkPlayerAttack(P.getXPos(), P.getYPos(), "up", P.getDamage()).split(",")
+                    if attackResponse[0] == "KILLED":
+                        P.addScore(int(attackResponse[1]))
+                        message = "Enemy killed"
+                    elif attackResponse[0] == "HIT":
+                        message = "Attack hit!"
+                    elif attackResponse[0] == "MISS":
+                        message = "Attack missed"
+                    elif attackResponse[0] == "DEAD":
+                        message = "Attack missed"
+                    else:
+                        message = "ERROR invalid attackResponse"
+
+        #drawChar(15, 3, "Enemy's turn")
+        #inkey()
 
 
 def end_game(score):
