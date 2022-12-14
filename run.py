@@ -1,7 +1,7 @@
-#Imports
+# Imports
 
-from pyfiglet import Figlet
-#import colorama
+
+# import colorama
 import os
 import termios
 import sys
@@ -9,39 +9,38 @@ import tty
 import math
 import random
 
+from pyfiglet import Figlet
 
-#Variable declarations
+# Variable declarations
 
 f = Figlet(font="slant")
-screenX = 80
-screenY = 24
-inkey_buffer = 1
-current_level = 1
-running = False
-enemies = []
+SCREENX = 80
+SCREENY = 24
+INKEY_BUFFER = 1
+# running = False
 
-#Ascii art
+# Ascii art
 
-boxFullAscii = [
+box_full_ascii = [
     "+---+",
     "| i |",
     "+---+"
 ]
 
-boxEmptyAscii = [
+box_empty_ascii = [
     "+---+",
     "|   |",
     "+---+"
 ]
 
-doorClosedAscii = [
+door_closed_ascii = [
     "+--+",
     "||||",
     "||||",
     "+--+"
 ]
 
-doorOpenAscii = [
+door_open_ascii = [
     "+--+",
     "|  |",
     "|  |",
@@ -49,101 +48,124 @@ doorOpenAscii = [
 ]
 
 
-#Class definitions
+# Class definitions
 
 
 class Enemy:
     """
     Generic class for enemies, defining their variables and functions
     """
-    def __init__(self, baseHealth, attack, hitChance, xPos, yPos, char):
-        self.baseHealth = baseHealth
-        self.health = baseHealth
+    def __init__(self, base_health, attack, hit_chance, x_pos, y_pos, char):
+        self.base_health = base_health
+        self.health = base_health
         self.attack = attack
-        self.hitChance = hitChance
-        self.xPos = xPos
-        self.yPos = yPos
+        self.hit_chance = hit_chance
+        self.x_pos = x_pos
+        self.y_pos = y_pos
         self.char = char
-        self.xDir = 0
-        self.yDir = 0
+        self.x_dir = 0
+        self.y_dir = 0
         self.range = 5
         self.active = True
 
-    def getHealth(self):
+    def get_health(self):
         return self.health
 
-    def setHealth(self, h):
-        self.health = h
+    def set_health(self, new_health):
+        self.health = new_health
 
-    def takeDamage(self, d):
-        self.health -= d
+    def take_damage(self, dam):
+        self.health -= dam
 
-    def setPos(self, x, y):
-        self.xPos = x
-        self.yPos = y
+    def set_pos(self, x_val, y_val):
+        self.x_pos = x_val
+        self.y_pos = y_val
 
-    def drawEnemy(self):
+    def draw_enemy(self):
         if self.active:
-            drawChar(self.xPos-1, self.yPos-1, self.health)
-            drawChar(self.xPos, self.yPos, self.char)
+            draw_char(self.x_pos-1, self.y_pos-1, self.health)
+            draw_char(self.x_pos, self.y_pos, self.char)
 
-    def checkPlayerDir(self, xPlayer, yPlayer):
-        if self.xPos > xPlayer+1:
-            self.xDir = -1
-        elif self.xPos < xPlayer-1:
-            self.xDir = 1
+    def check_player_dir(self, x_player, y_player):
+        if self.x_pos > x_player+1:
+            self.x_dir = -1
+        elif self.x_pos < x_player-1:
+            self.x_dir = 1
         else:
-            self.xDir = 0
+            self.x_dir = 0
 
-        if self.yPos > yPlayer+1:
-            self.yDir = -1
-        elif self.yPos < yPlayer-1:
-            self.yDir = 1
+        if self.y_pos > y_player+1:
+            self.y_dir = -1
+        elif self.y_pos < y_player-1:
+            self.y_dir = 1
         else:
-            self.yDir = 0
+            self.y_dir = 0
 
-    def checkPlayerDist(self, xPlayer, yPlayer):
-        if math.dist((xPlayer, yPlayer), (self.xPos, self.yPos)) <= self.range:
+    def check_player_dist(self, x_player, y_player):
+        if math.dist(
+                    (x_player, y_player),
+                    (self.x_pos, self.y_pos)) <= self.range:
             return True
 
-    def checkPlayerAttack(self, xPlayer, yPlayer, direction, dmg):
+    def check_player_attack(self, x_player, y_player, direction, dmg):
         if self.active:
             if direction == "up":
-                if xPlayer == self.xPos and yPlayer == (self.yPos + 1):
-                    self.takeDamage(dmg)
+                if x_player == self.x_pos and y_player == (self.y_pos + 1):
+                    self.take_damage(dmg)
                     if self.health <= 0:
                         self.active = False
-                        return "KILLED,"+str(math.floor(self.baseHealth*self.hitChance*self.attack))
+                        return ("KILLED," +
+                                str(math.floor(
+                                    self.base_health *
+                                    self.hit_chance *
+                                    self.attack)
+                                    )
+                                )
                     else:
                         return "HIT"
                 else:
                     return "MISS"
             elif direction == "left":
-                if xPlayer == (self.xPos + 1) and yPlayer == self.yPos:
-                    self.takeDamage(dmg)
+                if x_player == (self.x_pos + 1) and y_player == self.y_pos:
+                    self.take_damage(dmg)
                     if self.health <= 0:
                         self.active = False
-                        return "KILLED,"+str(math.floor(self.baseHealth*self.hitChance*self.attack))
+                        return "KILLED," + str(
+                                               math.floor(
+                                                          self.base_health *
+                                                          self.hit_chance *
+                                                          self.attack)
+                                              )
                     else:
                         return "HIT"
                 else:
                     return "MISS"
             elif direction == "down":
-                if xPlayer == self.xPos and yPlayer == (self.yPos - 1):
-                    self.takeDamage(dmg)
+                if x_player == self.x_pos and y_player == (self.y_pos - 1):
+                    self.take_damage(dmg)
                     if self.health <= 0:
                         self.active = False
-                        return "KILLED,"+str(math.floor(self.baseHealth*self.hitChance*self.attack))
+                        return "KILLED," + str(
+                                               math.floor(
+                                                          self.base_health *
+                                                          self.hit_chance *
+                                                          self.attack)
+                                              )
                     else:
                         return "HIT"
                 else:
                     return "MISS"
             elif direction == "right":
-                if xPlayer == (self.xPos - 1) and yPlayer == self.yPos:
-                    self.takeDamage(dmg)
+                if x_player == (self.x_pos - 1) and y_player == self.y_pos:
+                    self.take_damage(dmg)
                     if self.health <= 0:
                         self.active = False
-                        return "KILLED,"+str(math.floor(self.baseHealth*self.hitChance*self.attack))
+                        return "KILLED," + str(
+                                               math.floor(
+                                                          self.base_health *
+                                                          self.hit_chance *
+                                                          self.attack)
+                                              )
                     else:
                         return "HIT"
                 else:
@@ -153,12 +175,12 @@ class Enemy:
         else:
             return "DEAD"
 
-    def moveEnemy(self):
-        self.xPos += self.xDir
-        self.yPos += self.yDir
-        self.drawEnemy()
+    def move_enemy(self):
+        self.x_pos += self.x_dir
+        self.y_pos += self.y_dir
+        self.draw_enemy()
 
-    def checkActive(self):
+    def check_active(self):
         return self.active
 
 
@@ -173,27 +195,26 @@ class Player:
     damage = 50
     armour = 0
     inventory = {}
-    attackChance = 0.33
+    attack_chance = 0.33
 
     def __init__(self, name):
         self.name = name
-        
 
-    def drawPlayer(self):
-        drawChar(self.posX, self.posY, "i")
+    def draw_player(self):
+        draw_char(self.posX, self.posY, "i")
 
-    def damagePlayer(self, damage):
+    def damage_player(self, damage):
         self.health -= damage
         if self.health <= 0:
             end_game(self.score)
 
-    def movePlayer(self, direction):
+    def move_player(self, direction):
         if direction == "up":
             if self.posY > 1:
                 self.posY -= 1
 
         elif direction == "down":
-            if self.posY <= screenY-1:
+            if self.posY <= SCREENY-1:
                 self.posY += 1
 
         elif direction == "left":
@@ -201,31 +222,31 @@ class Player:
                 self.posX -= 1
 
         elif direction == "right":
-            if self.posX <= screenX-1:
+            if self.posX <= SCREENX-1:
                 self.posX += 1
 
-    def getXPos(self):
+    def getx_pos(self):
         return self.posX
 
-    def getYPos(self):
+    def gety_pos(self):
         return self.posY
 
-    def getDamage(self):
+    def get_damage(self):
         return self.damage
-    
-    def getAttackChance(self):
-        return self.attackChance
 
-    def setDamage(self, newDamage):
+    def get_attack_chance(self):
+        return self.attack_chance
+
+    def set_damage(self, newDamage):
         self.damage = newDamage
 
-    def addScore(self, amount):
+    def add_score(self, amount):
         self.score += amount
-    
-    def getScore(self):
+
+    def get_score(self):
         return self.score
 
-#Functions sourced from the internet
+# Functions sourced from the internet
 
 
 def inkey():
@@ -233,51 +254,63 @@ def inkey():
     Retrieves the key which was pressed by the user without hitting
     enter.
     """
-    fd=sys.stdin.fileno()
-    remember_attributes=termios.tcgetattr(fd)
+    fd = sys.stdin.fileno()
+    remember_attributes = termios.tcgetattr(fd)
     tty.setraw(sys.stdin.fileno())
-    character=sys.stdin.read(inkey_buffer)
+    character = sys.stdin.read(INKEY_BUFFER)
     termios.tcsetattr(fd, termios.TCSADRAIN, remember_attributes)
     return character
 
 
-#Function definitions
+# Function definitions
 
 
-def drawChar(x, y, char):
+def draw_char(x_pos, y_pos, char):
     """
     Function to draw the specified character
     at a specific location in the terminal
     """
 
-    print("\033["+str(y)+";"+str(x)+"f"+str(char))
+    print("\033["+str(y_pos)+";"+str(x_pos)+"f"+str(char))
 
 
-def drawAscii(x, y, ascii):
-    for i in range(0, len(ascii)):
-        drawChar(x, y+i, ascii[i])
+def draw_ascii(x_pos, y_pos, ascii_list):
+    for i in range(0, len(ascii_list)):
+        draw_char(x_pos, y_pos+i, ascii_list[i])
+
 
 def generate_room(number):
     enemies = []
     for i in range(0, random.randint(1, number+1)):
-        enemies.append(Enemy((10*(number)), 10, 0.2, random.randint(4, 79), random.randint(4, 23), "G"))
-
+        enemies.append(
+            Enemy(
+                (10 * (number)),
+                10,
+                0.2,
+                random.randint(4, 79),
+                random.randint(4, 23),
+                "G")
+            )
     return enemies
+
+
 def start_menu():
     """
     Function to display the start menu
     """
-    running = False
+    # running = False
     os.system("clear")
     print(f.renderText("Into the Depths"))
-    print("Please choose an option by typing either '1' or '2' and pressing enter. \n \n")
+    print("Please choose an option by typing either" +
+          "'1' or '2' and pressing enter. \n \n")
     print("1. Start Game")
     print("2. Instructions")
     choice = input("")
 
     while choice != "1" and choice != "2":
         print("Entered value: "+choice)
-        print("Invalid choice, please type either '1' or '2' to make a selection")
+        print("Invalid choice, please type either " +
+              "'1' or '2' to make a selection")
         choice = input("")
 
     if choice == "1":
@@ -286,12 +319,13 @@ def start_menu():
         display_instructions()
 
 
-def getActiveEnemies(enemies):
+def get_active_enemies(enemies):
     count = 0
     for e in enemies:
-        if e.checkActive:
+        if e.check_active:
             count += 1
     return count
+
 
 def start_game():
     """
@@ -299,94 +333,100 @@ def start_game():
     """
     running = True
     P = Player("John")
-    roomNo = 1
-    roomClear = True
+    room_no = 1
+    room_clear = True
     message = ""
-    playerTurn = True
+    player_turn = True
 
     while running:
-        enemyNo = 0
+        enemy_no = 0
 
-        if roomClear:
-            enemies = generate_room(roomNo)
-            #drawChar(1, 2, "Room generated")
-            roomClear = False
+        if room_clear:
+            enemies = generate_room(room_no)
+            # draw_char(1, 2, "Room generated")
+            room_clear = False
 
         for e in enemies:
-            if e.checkActive():
-                enemyNo += 1
-    
-        if enemyNo == 0:
+            if e.check_active():
+                enemy_no += 1
+
+        if enemy_no == 0:
             message = "All enemies killed!"
-            roomClear = True
-            P.addScore(100 * roomNo)
-            roomNo += 1
+            room_clear = True
+            P.add_score(100 * room_no)
+            room_no += 1
 
         os.system("clear")
 
-        drawChar(1, 1, str(enemyNo)+" enemies remaining. - Player score is "+str(P.getScore())+" - "+message)
+        draw_char(1, 1, str(enemy_no) +
+                  " enemies remaining. - Player score is " +
+                  str(P.get_score()) + " - " + message)
 
-        P.drawPlayer()
-        
-        if not playerTurn:
-            playerTurn = True
+        P.draw_player()
+
+        if not player_turn:
+            player_turn = True
             for e in enemies:
-                if e.checkActive():
-                    if e.checkPlayerDist(P.getXPos(), P.getYPos()):
-                        e.checkPlayerDir(P.getXPos(), P.getYPos())
-                        e.moveEnemy()
+                if e.check_active():
+                    if e.check_player_dist(P.getx_pos(), P.gety_pos()):
+                        e.check_player_dir(P.getx_pos(), P.gety_pos())
+                        e.move_enemy()
                     else:
-                        e.drawEnemy()
-            ##inkey()
+                        e.draw_enemy()
+            # inkey()
         else:
             for e in enemies:
-                e.drawEnemy()
+                e.draw_enemy()
 
             char = inkey()
-            playerTurn = False
-        
+            player_turn = False
+
             if char == chr(27):
                 running = False
                 start_menu()
 
             elif char == "w":
-                P.movePlayer("up")
+                P.move_player("up")
             elif char == "a":
-                P.movePlayer("left")
+                P.move_player("left")
             elif char == "s":
-                P.movePlayer("down")
+                P.move_player("down")
             elif char == "d":
-                P.movePlayer("right")
+                P.move_player("right")
             elif char == "i" or char == "j" or char == "k" or char == "l":
-                if random.random() >= P.getAttackChance(): 
+                if random.random() >= P.get_attack_chance():
                     if char == "i":
-                        attackDir = "up"
+                        attack_dir = "up"
                     elif char == "j":
-                        attackDir = "left"
+                        attack_dir = "left"
                     elif char == "k":
-                        attackDir = "down"
+                        attack_dir = "down"
                     elif char == "l":
-                        attackDir = "right"
+                        attack_dir = "right"
 
                     for e in enemies:
-                        attackResponse = e.checkPlayerAttack(P.getXPos(), P.getYPos(), attackDir, P.getDamage()).split(",")
-                        if attackResponse[0] == "KILLED":
-                            P.addScore(int(attackResponse[1]))
+                        attack_response = e.check_player_attack(
+                                                             P.getx_pos(),
+                                                             P.gety_pos(),
+                                                             attack_dir,
+                                                             P.get_damage()
+                                                             ).split(",")
+                        if attack_response[0] == "KILLED":
+                            P.add_score(int(attack_response[1]))
                             message = "Enemy killed"
-                        elif attackResponse[0] == "HIT":
+                        elif attack_response[0] == "HIT":
                             message = "Attack hit!"
-                        elif attackResponse[0] == "MISS":
+                        elif attack_response[0] == "MISS":
                             message = "Attack missed"
-                        elif attackResponse[0] == "DEAD":
+                        elif attack_response[0] == "DEAD":
                             message = "Attack missed"
                         else:
-                            message = "ERROR invalid attackResponse"
+                            message = "ERROR invalid attack_response"
                 else:
                     message = "Attack missed"
 
-
-        #drawChar(15, 3, "Enemy's turn")
-        #inkey()
+        # draw_char(15, 3, "Enemy's turn")
+        # inkey()
 
 
 def end_game(score):
@@ -396,22 +436,18 @@ def end_game(score):
     the main menu or play again.
     """
     os.system("clear")
-    running = False
+    # running = False
     print(f.renderText("Game over") + "\n \n")
-    print("""
-    You have perished.
-    Your final score was
-        """ + str(score) +
-        """
-    Would you like to play again?
-    Type 'y' to play again or 'n' to exit to the
-    main menu.
-        """)
+    print("You have perished. \nYour final score was" +
+          str(score) +
+          "\nWould you like to play again?\n" +
+          "Type 'y' to play again or 'n' to exit to the main menu.")
     answer = input("")
 
     while answer != "y" and answer != "n":
         print("Entered value: "+answer)
-        print("Invalid choice, please enter either 'y' or 'n' to make a selection.")
+        print("Invalid choice, please enter either 'y' " +
+              "or 'n' to make a selection.")
         answer = input("")
 
     if answer == "y":
@@ -426,16 +462,22 @@ def display_instructions():
     """
     os.system("clear")
     print(f.renderText("Instructions") + "\n \n")
-    print("Once you have started the game by choosing option '1' on the start menu,")
-    print("you will be placed into the starting room where you can choose from a small")
-    print("set of starting gear. If you are not happy with the choices presented, you")
-    print("may re-roll for different options. Otherwise, make your choice and enter the")
-    print("door to begin! \n")
-
-    print("You will now battle your way through rooms which present harder and more")
-    print("numerous enemies the further you go - finding more powerful items along the")
-    print("way. The goal is to survive as long as you can and build up the highest")
-    print("score possible. \n \n")
+    print("Once you have started the game by choosing " +
+          "option '1' on the start menu, " +
+          "you will be placed into the starting room " +
+          "where you can choose from a small"
+          "set of starting gear. If you are not happy " +
+          "with the choices presented, you" +
+          "may re-roll for different options. Otherwise, " +
+          "make your choice and enter the" +
+          "door to begin! \n\n" +
+          "You will now battle your way through rooms " +
+          "which present harder and more" +
+          "numerous enemies the further you go - " +
+          "finding more powerful items along the" +
+          "way. The goal is to survive as long as " +
+          "you can and build up the highest" +
+          "score possible. \n \n")
 
     input("Press enter for the game controls")
 
