@@ -580,22 +580,19 @@ def display_instructions():
     print(f.renderText("Instructions") + "\n \n")
     print("Once you have started the game by choosing " +
           "option '1' on the start menu, " +
-          "you will be placed into the starting room " +
-          "where you can choose from a small"
-          "set of starting gear. If you are not happy " +
-          "with the choices presented, you" +
-          "may re-roll for different options. Otherwise, " +
-          "make your choice and enter the" +
-          "door to begin! \n\n" +
-          "You will now battle your way through rooms " +
-          "which present harder and more" +
-          "numerous enemies the further you go - " +
-          "finding more powerful items along the" +
-          "way. The goal is to survive as long as " +
-          "you can and build up the highest" +
-          "score possible. \n \n")
+          "you will be placed into the first room, containing " +
+          "enemies for you to fight, represented by a 'G'. " +
+          "\nThe number above each enemy is their current health."
+          "\nWhen all enemies are defeated " +
+          "you will move onto the next room containing more enemies." +
+          "\nThe number of enemies and their stats (such as" +
+          " health and attack chance) will increase as you progress " +
+          "through the game, increasing difficulty.\n" + 
+          "If your health reaches zero, the game is over " +
+          "and you will be told your final score, with the option " +
+          "to either play again or exit to the main menu.")
 
-    input("Press enter for the game controls")
+    input("\nPress enter for the game controls")
 
     os.system("clear")
     print(f.renderText("Controls") + "\n")
@@ -610,10 +607,12 @@ def display_instructions():
     print("K - Attack down")
     print("L - Attack right \n")
     print("Miscellaneous:")
-    print("'i' - View inventory")
-    print("'Esc' - Exit back to main menu \n")
+    print("'Esc key' or 'Arrow keys' - Exit back to main menu \n")
 
     print(f.renderText("Good luck!"))
+
+    input("Press enter to return to the main menu")
+    start_menu()
 
 
 start_menu()
