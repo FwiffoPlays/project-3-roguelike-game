@@ -1,3 +1,9 @@
+"""
+Code Institute Project 3 - Python Essentials
+This is a terminal-based roguelike game where the player
+strives to get the highest score possible by killing
+progressively more difficult waves of enemies.
+"""
 # Imports
 
 
@@ -69,24 +75,42 @@ class Enemy:
         self.active = True
 
     def get_health(self):
+        """
+        Returns the enemy's current health
+        """
         return self.health
 
     def set_health(self, new_health):
+        """
+        Sets the enemy's health to the provided value
+        """
         self.health = new_health
 
     def take_damage(self, dam):
+        """
+        Decreases the enemy's health by the provided value
+        """
         self.health -= dam
 
     def set_pos(self, x_val, y_val):
+        """
+        Sets the enemy's health to the provided x and y values
+        """
         self.x_pos = x_val
         self.y_pos = y_val
 
     def draw_enemy(self):
+        """
+        Draws the current enemy's character if they are alive/active
+        """
         if self.active:
             draw_char(self.x_pos-1, self.y_pos-1, self.health)
             draw_char(self.x_pos, self.y_pos, self.char)
 
     def check_player_dir(self, x_player, y_player):
+        """
+        Sets which direction the enemy must move to approach the player
+        """
         if self.x_pos > x_player+1:
             self.x_dir = -1
         elif self.x_pos < x_player-1:
@@ -102,25 +126,37 @@ class Enemy:
             self.y_dir = 0
 
     def check_player_range(self, x_player, y_player):
+        """
+        Checks whether the player is in visual range of the enemy
+        """
         if math.dist(
                     (x_player, y_player),
                     (self.x_pos, self.y_pos)) <= self.range:
             return True
 
     def check_player_dist(self, x_player, y_player):
+        """
+        Checks if the player is close enough to attack
+        """
         if math.dist(
                     (x_player, y_player),
                     (self.x_pos, self.y_pos)) == 1:
             return True
 
     def attempt_attack(self):
+        """
+        Decides if the enemy's attack on the player was successful
+        """
         if random.random() <= self.hit_chance:
             return self.attack
         else:
             return False
 
-
     def check_player_attack(self, x_player, y_player, direction, dmg):
+        """
+        Checks if the player's attack hits and returns the enemy's new status
+        depending on the result
+        """
         if self.active:
             if direction == "up":
                 if x_player == self.x_pos and y_player == (self.y_pos + 1):
@@ -189,11 +225,17 @@ class Enemy:
             return "DEAD"
 
     def move_enemy(self):
+        """
+        Moves the enemy towards the player
+        """
         self.x_pos += self.x_dir
         self.y_pos += self.y_dir
         self.draw_enemy()
 
     def check_active(self):
+        """
+        Returns the enemy's state (alive/dead)
+        """
         return self.active
 
 
@@ -201,8 +243,8 @@ class Player:
     """
     Class for the player, containing their attributes and main functions
     """
-    posX = 5
-    posY = 5
+    pos_x = 5
+    pos_y = 5
     health = 100
     score = 0
     damage = 50
@@ -214,52 +256,86 @@ class Player:
         self.name = name
 
     def draw_player(self):
-        draw_char(self.posX, self.posY, "i")
+        """
+        Draws the player's character at the player's position
+        """
+        draw_char(self.pos_x, self.pos_y, "i")
 
     def damage_player(self, damage):
+        """
+        Reduces the player's health by the provided amount and checks
+        whether they are still alive, ending the game if not
+        """
         self.health -= damage
         if self.health <= 0:
             end_game(self.score)
 
     def move_player(self, direction):
+        """
+        Moves the player in the provided direction
+        """
         if direction == "up":
-            if self.posY > 1:
-                self.posY -= 1
+            if self.pos_y > 1:
+                self.pos_y -= 1
 
         elif direction == "down":
-            if self.posY <= SCREENY-1:
-                self.posY += 1
+            if self.pos_y <= SCREENY-1:
+                self.pos_y += 1
 
         elif direction == "left":
-            if self.posX > 1:
-                self.posX -= 1
+            if self.pos_x > 1:
+                self.pos_x -= 1
 
         elif direction == "right":
-            if self.posX <= SCREENX-1:
-                self.posX += 1
+            if self.pos_x <= SCREENX-1:
+                self.pos_x += 1
 
     def get_x_pos(self):
-        return self.posX
+        """
+        Returns the player's x coordinate
+        """
+        return self.pos_x
 
     def get_y_pos(self):
-        return self.posY
+        """
+        Returns the player's y coordinate
+        """
+        return self.pos_y
 
     def get_damage(self):
+        """
+        Returns the player's damage stat
+        """
         return self.damage
-    
+
     def get_health(self):
+        """
+        Returns the player's health
+        """
         return self.health
 
     def get_attack_chance(self):
+        """
+        Returns the player's hit chance stat
+        """
         return self.attack_chance
 
-    def set_damage(self, newDamage):
-        self.damage = newDamage
+    def set_damage(self, new_damage):
+        """
+        Sets the player's damage stat to the provided value
+        """
+        self.damage = new_damage
 
     def add_score(self, amount):
+        """
+        Increases the player's score by the provided amount
+        """
         self.score += amount
 
     def get_score(self):
+        """
+        Returns the player's score
+        """
         return self.score
 
 # Functions sourced from the internet
@@ -268,7 +344,8 @@ class Player:
 def inkey():
     """
     Retrieves the key which was pressed by the user without hitting
-    enter.
+    enter. Sources from:
+    https://code.activestate.com/recipes/577728-simpletron3xpy-game-to-demo-xy-drawing-using-the-k/?in=user-4177147
     """
     fd = sys.stdin.fileno()
     remember_attributes = termios.tcgetattr(fd)
@@ -291,11 +368,19 @@ def draw_char(x_pos, y_pos, char):
 
 
 def draw_ascii(x_pos, y_pos, ascii_list):
+    """
+    Draws ASCII art at the provided coordinates using the provided
+    list of strings
+    """
     for i in range(0, len(ascii_list)):
         draw_char(x_pos, y_pos+i, ascii_list[i])
 
 
 def generate_room(number):
+    """
+    Randomly generates a set of enemies based on the current level/room
+    number
+    """
     enemies = []
     for i in range(0, random.randint(1, number+1)):
         enemies.append(
@@ -336,19 +421,23 @@ def start_menu():
 
 
 def get_active_enemies(enemies):
+    """
+    Returns the number of enemies still alive
+    """
     count = 0
-    for e in enemies:
-        if e.check_active:
+    for enemy in enemies:
+        if enemy.check_active:
             count += 1
     return count
 
 
 def start_game():
     """
-    Main function to start the game
+    Main function to start the game, containing the main loop and
+    logic for player movement
     """
     running = True
-    P = Player("John")
+    player = Player("John")
     room_no = 1
     room_clear = True
     message = ""
@@ -362,45 +451,48 @@ def start_game():
             # draw_char(1, 2, "Room generated")
             room_clear = False
 
-        for e in enemies:
-            if e.check_active():
+        for enemy in enemies:
+            if enemy.check_active():
                 enemy_no += 1
 
         if enemy_no == 0:
             message = "All enemies killed!"
             room_clear = True
-            P.add_score(100 * room_no)
+            player.add_score(100 * room_no)
             room_no += 1
 
         os.system("clear")
 
         draw_char(1, 1, str(enemy_no) +
                   " enemies remaining. - Player score is " +
-                  str(P.get_score()) + " - " + 
-                  "Health: "+ str(P.get_health()) + " - " +
+                  str(player.get_score()) + " - " +
+                  "Health: " + str(player.get_health()) + " - " +
                   message)
 
-        P.draw_player()
+        player.draw_player()
 
         if not player_turn:
             player_turn = True
-            
-            for e in enemies:
-                if e.check_active():
-                    if e.check_player_dist(P.get_x_pos(), P.get_y_pos()):
-                        attack_damage = e.attempt_attack()
+
+            for enemy in enemies:
+                if enemy.check_active():
+                    if enemy.check_player_dist(player.get_x_pos(),
+                                               player.get_y_pos()):
+                        attack_damage = enemy.attempt_attack()
                         if attack_damage:
-                            P.damage_player(attack_damage)
+                            player.damage_player(attack_damage)
                     else:
-                        if e.check_player_range(P.get_x_pos(), P.get_y_pos()):
-                            e.check_player_dir(P.get_x_pos(), P.get_y_pos())
-                            e.move_enemy()
+                        if enemy.check_player_range(player.get_x_pos(),
+                                                    player.get_y_pos()):
+                            enemy.check_player_dir(player.get_x_pos(),
+                                                   player.get_y_pos())
+                            enemy.move_enemy()
                         else:
-                            e.draw_enemy()
+                            enemy.draw_enemy()
             # inkey()
         else:
-            for e in enemies:
-                e.draw_enemy()
+            for enemy in enemies:
+                enemy.draw_enemy()
 
             char = inkey()
             player_turn = False
@@ -410,15 +502,15 @@ def start_game():
                 start_menu()
 
             elif char == "w":
-                P.move_player("up")
+                player.move_player("up")
             elif char == "a":
-                P.move_player("left")
+                player.move_player("left")
             elif char == "s":
-                P.move_player("down")
+                player.move_player("down")
             elif char == "d":
-                P.move_player("right")
+                player.move_player("right")
             elif char == "i" or char == "j" or char == "k" or char == "l":
-                if random.random() >= P.get_attack_chance():
+                if random.random() >= player.get_attack_chance():
                     if char == "i":
                         attack_dir = "up"
                     elif char == "j":
@@ -428,15 +520,15 @@ def start_game():
                     elif char == "l":
                         attack_dir = "right"
 
-                    for e in enemies:
-                        attack_response = e.check_player_attack(
-                                                             P.get_x_pos(),
-                                                             P.get_y_pos(),
-                                                             attack_dir,
-                                                             P.get_damage()
-                                                             ).split(",")
+                    for enemy in enemies:
+                        attack_response = enemy.check_player_attack(
+                                                            player.get_x_pos(),
+                                                            player.get_y_pos(),
+                                                            attack_dir,
+                                                            player.get_damage()
+                                                            ).split(",")
                         if attack_response[0] == "KILLED":
-                            P.add_score(int(attack_response[1]))
+                            player.add_score(int(attack_response[1]))
                             message = "Enemy killed"
                         elif attack_response[0] == "HIT":
                             message = "Attack hit!"
