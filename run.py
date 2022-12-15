@@ -344,7 +344,7 @@ class Player:
 def inkey():
     """
     Retrieves the key which was pressed by the user without hitting
-    enter. Sources from:
+    enter. Sourced from:
     https://code.activestate.com/recipes/577728-simpletron3xpy-game-to-demo-xy-drawing-using-the-k/?in=user-4177147
     """
     fd = sys.stdin.fileno()
