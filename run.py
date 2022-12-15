@@ -101,11 +101,24 @@ class Enemy:
         else:
             self.y_dir = 0
 
-    def check_player_dist(self, x_player, y_player):
+    def check_player_range(self, x_player, y_player):
         if math.dist(
                     (x_player, y_player),
                     (self.x_pos, self.y_pos)) <= self.range:
             return True
+
+    def check_player_dist(self, x_player, y_player):
+        if math.dist(
+                    (x_player, y_player),
+                    (self.x_pos, self.y_pos)) == 1:
+            return True
+
+    def attempt_attack(self):
+        if random.random() <= self.hit_chance:
+            return self.attack
+        else:
+            return False
+
 
     def check_player_attack(self, x_player, y_player, direction, dmg):
         if self.active:
@@ -225,14 +238,17 @@ class Player:
             if self.posX <= SCREENX-1:
                 self.posX += 1
 
-    def getx_pos(self):
+    def get_x_pos(self):
         return self.posX
 
-    def gety_pos(self):
+    def get_y_pos(self):
         return self.posY
 
     def get_damage(self):
         return self.damage
+    
+    def get_health(self):
+        return self.health
 
     def get_attack_chance(self):
         return self.attack_chance
@@ -284,9 +300,9 @@ def generate_room(number):
     for i in range(0, random.randint(1, number+1)):
         enemies.append(
             Enemy(
-                (10 * (number)),
+                10 * (number),
                 10,
-                0.2,
+                0.1 * (number),
                 random.randint(4, 79),
                 random.randint(4, 23),
                 "G")
@@ -360,19 +376,27 @@ def start_game():
 
         draw_char(1, 1, str(enemy_no) +
                   " enemies remaining. - Player score is " +
-                  str(P.get_score()) + " - " + message)
+                  str(P.get_score()) + " - " + 
+                  "Health: "+ str(P.get_health()) + " - " +
+                  message)
 
         P.draw_player()
 
         if not player_turn:
             player_turn = True
+            
             for e in enemies:
                 if e.check_active():
-                    if e.check_player_dist(P.getx_pos(), P.gety_pos()):
-                        e.check_player_dir(P.getx_pos(), P.gety_pos())
-                        e.move_enemy()
+                    if e.check_player_dist(P.get_x_pos(), P.get_y_pos()):
+                        attack_damage = e.attempt_attack()
+                        if attack_damage:
+                            P.damage_player(attack_damage)
                     else:
-                        e.draw_enemy()
+                        if e.check_player_range(P.get_x_pos(), P.get_y_pos()):
+                            e.check_player_dir(P.get_x_pos(), P.get_y_pos())
+                            e.move_enemy()
+                        else:
+                            e.draw_enemy()
             # inkey()
         else:
             for e in enemies:
@@ -406,8 +430,8 @@ def start_game():
 
                     for e in enemies:
                         attack_response = e.check_player_attack(
-                                                             P.getx_pos(),
-                                                             P.gety_pos(),
+                                                             P.get_x_pos(),
+                                                             P.get_y_pos(),
                                                              attack_dir,
                                                              P.get_damage()
                                                              ).split(",")
@@ -438,7 +462,7 @@ def end_game(score):
     os.system("clear")
     # running = False
     print(f.renderText("Game over") + "\n \n")
-    print("You have perished. \nYour final score was" +
+    print("You have perished. \nYour final score was " +
           str(score) +
           "\nWould you like to play again?\n" +
           "Type 'y' to play again or 'n' to exit to the main menu.")
