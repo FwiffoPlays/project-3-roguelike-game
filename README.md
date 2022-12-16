@@ -106,21 +106,36 @@ The 'Esc' key or Arrow keys exit the game back to the main menu.
 
 **Built-in Libraries**
 
-os
-
-termios
-
-sys
-
-tty
+**os**
+* The 'OS' library provides functions for interacting with the Operating System, such as clearing the terminal the code is running in, as it is used in this project.
 
 math
+* Provides various useful maths operations
+* This was mainly used for the 'math.floor' function to round down a number.
 
 random
+* Includes various forms of random number generation
+* This was used to add elements of randomness to the game, such as enemy generation.
+
+termios
+* Provides UNIX-specific terminal controls (This project was developed on and runs within a UNIX based terminal)
+* This was used for the method sourced from the internet for getting the character the user pressed
+
+sys
+* This was used for the method sourced from the internet for getting the character the user pressed
+
+tty
+* This was used for the method sourced from the internet for getting the character the user pressed
 
 **Third-party Libraries**
 
-pyfiglet
+**pyfiglet**
+* PyFiglet is a third-party library which allows for the easy creation of ASCII-Art text
+
+**Other technologies used**
+
+* Heroku was used as cloud app host to deploy the final project
+* Gitpod was the main development environment which allowed for the project to be easily worked on using any computer with an internet connection and a web browser.
 
 ## Testing
 
