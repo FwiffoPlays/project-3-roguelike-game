@@ -80,8 +80,6 @@ The 'Esc' key or Arrow keys exit the game back to the main menu.
 
 * Adding randomly generated items for the player to pick up which will aid them by increasing stats or allowing for actions such as healing. Having a limited inventory capacity for such items would introduce the additional aspect of inventory management, adding further depth to the gameplay.
 
-## Classes
-
 ## Flow Control
 
 * The following flow control diagram shows the initial plan for the game's logic, which aided in development when considering each part of the game and they would interact with eachother.
@@ -135,11 +133,33 @@ tty
 **Other technologies used**
 
 * Heroku was used as cloud app host to deploy the final project
-* Gitpod was the main development environment which allowed for the project to be easily worked on using any computer with an internet connection and a web browser.
+* Gitpod was the main development environment which allowed for the project to be easily worked on usin any computer with an internet connection and a web browser.
 
 ## Testing
 
+* During various stages of development I used techniques such as printing variable value and eventually using my 'drawChar' method to allow me to debug certain values as the program ran.
+
+* All errors and most warnings were fixed using the feedback provided by the Python linter and Visual Studio Code, which ensures the code will run without syntax errors and remain readable for future development.
+
+* All forms of input within the game were tested throughout development to make sure they both responded to valid inputs as expected and handled incorrect inputs in a graceful way, such as providing feedback to the user to remind them of the valid input choices. 
+
+    * The start menu accepts only '1' or '2' as inputs and responds with a prompt for either of these values if anything else is entered.
+
+    * The instructions pages will accept any input value, as long as 'enter' is pressed by the user to continue. The input value received by the user is not stored as it is not required here so any input is allowed.
+
+    * The game over method accepts only 'y' or 'n' as responses and also prompts for these values if anything else is entered by the user.
+
+    * The main game's inputs were tested to ensure they work as intended ('W', 'A', 'S' and 'D' keys move 'Up', 'Left', 'Down' and 'Right' as expected. The 'I', 'J', 'K' and 'L' keys also attack in their respective directions.) The escape key returns the player to the main menu as expected. Pressing most other keys on the keyboard results in no action as expected, however pressing any key which uses 'escape' character in the terminal (such as the arrow keys or function keys) will also exit the user to the main menu as these are all interpreted as 'escape' characters.
+
+ * In gameplay the player is able to attack successfully, as well as the enemies being able to chase and attack the player. Both the player and enemies can take damage and die.
+
+ * The 'Game Over' screen is correctly triggered when the player's health reached zero, which also output the player's score as intended.
+
 ### Found issues/bugs
+
+* Pressing any key which sends 'escape' characters to the terminal (such as 'Esc' or function keys) will return to the main menu, however only the 'Esc' key was intended to be able to do this. This could be solved by looking at all the characters a key sends to the terminal, as each of these keys produces their own escape character code (For example 'Esc' is just '^[' whereas the 'Up' arrow key is '^[[A')
+
+* The information panel at the top of the game will sometimes show incorrect status messages, such as displaying 'Attack missed' despite a player's attack hitting an enemy. This could be resolved by reviewing the logic involved in producing these messages to ensure only the correct ones are displayed.
 
 ### Validator testing
 
