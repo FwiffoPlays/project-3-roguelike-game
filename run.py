@@ -587,7 +587,7 @@ def display_instructions():
           "you will move onto the next room containing more enemies." +
           "\nThe number of enemies and their stats (such as" +
           " health and attack chance) will increase as you progress " +
-          "through the game, increasing difficulty.\n" + 
+          "through the game, increasing difficulty.\n" +
           "If your health reaches zero, the game is over " +
           "and you will be told your final score, with the option " +
           "to either play again or exit to the main menu.")

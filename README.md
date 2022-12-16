@@ -128,6 +128,9 @@ pyfiglet
 
 ### Validator testing
 
+* The Code Institute Python Linter tool was used to verify that my python code followed the naming and formatting conventions for python. This was done by copying and pasting my code into the tester, which confirmed no errors as shown below:
+![Screenshot of the results from the Code Institude Python Linter tool](assets/images/readme/CIPythonLinterResult.png)
+
 ## Deployment
 
 ### Version Control
