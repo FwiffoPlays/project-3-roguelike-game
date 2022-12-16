@@ -133,6 +133,38 @@ pyfiglet
 
 ## Deployment
 
+The project was deployed to [Heroku](https://dashboard.heroku.com/apps), which is a cloud application platform that allows developers to host their projects on the Heroku servers which will run their apps.
+
+The Code Institute Python Essentials template was used to provide an emulated terminal to allow the project to be deployed and used within Heroku as if it was being ran straight from a Linux terminal locally.
+
+The command 'pip3 freeze > requirements.txt' must be typed before beginning deployment so that Heroku knows which third party libraries it needs to install for the project.
+
+Heroku deployment was done as follows:
+
+1. Login or sign up to Heroku
+2. Click 'New' on the main dashboard in the top right and then click 'Create New App' in the drop down.
+3. Enter a unique name for the app (This project uses 'ci-project-3-roguelike-game')
+4. Select the region applicable for you
+5. Click 'Create App'
+6. Go to the 'Settings' tab and add the 'Python' and 'Node.JS' buildpacks under the 'Buildpacks' section, ensuring the Python pack comes before (is on top of) the Node.JS pack.
+7. Open the 'Deploy' tab at the top of the page
+8. Click 'Github' to use as the deployment method
+9. Authorise the connection to GitHub
+10. Type your repository's name to search for it and click 'Connect'
+11. At the bottom choose the 'Deploy Branch' option (The 'Enable Automatic Deployment' option is also recommended for easier updates when you make changes to your project)
+
+
 ### Version Control
 
+Throughout the sites development, the version control system 'Git' was used to upload code changes. The following commands were written into the command line to perform this for each change:
+
+git add <file> -Tells git which file(s) should be added to the next commit. ('git add .' includes all files and folders in the current directory, which was used for most of the project's development so that changes such as adding images to the readme were also included.)
+
+git commit -m "Commit message" -Creates a commit with the added files and sets the commit log message.
+
+git push -Sends the commit to the Git server for backup
+
 ## Credits
+
+The 'inkey' method used for getting the key the user has pressed in a terminal without them pressing enter was sourced from the program here which provided a simple demo of it:
+    https://code.activestate.com/recipes/577728-simpletron3xpy-game-to-demo-xy-drawing-using-the-k/?in=user-4177147
