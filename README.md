@@ -66,6 +66,7 @@ The 'Esc' key or Arrow keys exit the game back to the main menu.
 
 * The information panel is displayed at the top of the screen throughout gameplay and provides feedback to the player, such as telling them the remaining number of enemies; their health; their current score and the outcome of recent actions such as attacks or killing enemies.
 * This aids the player in understanding their progress in the game and important information such as their health, improving the user experience.
+
 ![Information panel screenshot](assets/images/readme/InfoPanel.png)
 
 **Game over**
@@ -83,9 +84,23 @@ The 'Esc' key or Arrow keys exit the game back to the main menu.
 
 ## Flow Control
 
+* The following flow control diagram shows the initial plan for the game's logic, which aided in development when considering each part of the game and they would interact with eachother.
+* Due to time constraints certain features were ommitted for the final release, which will be detailed below.
+
 ![Flow control diagram](assets/images/readme/FlowControlDiagram.jpg)
 
+* Entering the user's name, the starting room to select initial gear and collecting items throughout the game were the main 3 features which did not make it to the final release. With more time, adding these features (particularly collecting items) would add to the progression and user experience of the game and so would be main goals for a potential future release.
+
 ## Aesthetic Design
+
+* The game features a simple aesthetic design, making use of ASCII symbols such as the 'i' to represent the player.
+* The 'Pyfiglet' library was used to emphasise pieces of text during the game's menus by turning them into ASCII art, making them stand out to the player.
+
+![PyFiglet ASCII art example screenshot](assets/images/readme/ASCIIArtExample.png)
+
+### Future aesthetic changes
+
+* My original plan for the game involved using the 'colorama' library to add colour to elements of the game, which would have made it easier for the player to differentiate between objects in the game, as well as provided an additional layer of visual feedback to the player, improving the game's general playability as well as the user experience.
 
 ## Libraries and Technology Used
 
