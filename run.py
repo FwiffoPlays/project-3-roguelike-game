@@ -7,7 +7,6 @@ progressively more difficult waves of enemies.
 # Imports
 
 
-# import colorama
 import os
 import termios
 import sys
@@ -23,36 +22,6 @@ f = Figlet(font="slant")
 SCREENX = 80
 SCREENY = 24
 INKEY_BUFFER = 1
-# running = False
-
-# Ascii art
-
-box_full_ascii = [
-    "+---+",
-    "| i |",
-    "+---+"
-]
-
-box_empty_ascii = [
-    "+---+",
-    "|   |",
-    "+---+"
-]
-
-door_closed_ascii = [
-    "+--+",
-    "||||",
-    "||||",
-    "+--+"
-]
-
-door_open_ascii = [
-    "+--+",
-    "|  |",
-    "|  |",
-    "+--+"
-]
-
 
 # Class definitions
 
@@ -367,15 +336,6 @@ def draw_char(x_pos, y_pos, char):
     print("\033["+str(y_pos)+";"+str(x_pos)+"f"+str(char))
 
 
-def draw_ascii(x_pos, y_pos, ascii_list):
-    """
-    Draws ASCII art at the provided coordinates using the provided
-    list of strings
-    """
-    for i in range(0, len(ascii_list)):
-        draw_char(x_pos, y_pos+i, ascii_list[i])
-
-
 def generate_room(number):
     """
     Randomly generates a set of enemies based on the current level/room
@@ -399,7 +359,6 @@ def start_menu():
     """
     Function to display the start menu
     """
-    # running = False
     os.system("clear")
     print(f.renderText("Into the Depths"))
     print("Please choose an option by typing either" +
@@ -448,7 +407,6 @@ def start_game():
 
         if room_clear:
             enemies = generate_room(room_no)
-            # draw_char(1, 2, "Room generated")
             room_clear = False
 
         for enemy in enemies:
@@ -489,7 +447,6 @@ def start_game():
                             enemy.move_enemy()
                         else:
                             enemy.draw_enemy()
-            # inkey()
         else:
             for enemy in enemies:
                 enemy.draw_enemy()
@@ -541,9 +498,6 @@ def start_game():
                 else:
                     message = "Attack missed"
 
-        # draw_char(15, 3, "Enemy's turn")
-        # inkey()
-
 
 def end_game(score):
     """
@@ -552,7 +506,7 @@ def end_game(score):
     the main menu or play again.
     """
     os.system("clear")
-    # running = False
+
     print(f.renderText("Game over") + "\n \n")
     print("You have perished. \nYour final score was " +
           str(score) +
